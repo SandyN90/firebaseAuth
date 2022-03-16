@@ -6,6 +6,8 @@
       <input type="text" placeholder="Enter Email" v-model="email" />
       <input type="password" placeholder="Enter password" v-model="password" />
       <button @click="login">Login</button>
+      <hr />
+      <button @click="googlePopUp">GooglePopUp</button>
     </div>
   </div>
 </template>
@@ -13,7 +15,12 @@
 <script>
 import app from "../firebase.js";
 // import firebase from "firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 export default {
   data() {
@@ -37,6 +44,21 @@ export default {
           console.log(error.code);
           console.log(error.message);
           // ..
+        });
+    },
+    googlePopUp: function () {
+      const auth = getAuth();
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // This gives you a Google access token. You can use it to access the googel api
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          const user = result.user;
+        })
+        .catch((err) => {
+          console.log(err.code, err.message, err.email);
+          const credential = GoogleAuthProvider.credentialFromError(err);
         });
     },
   },
