@@ -8,6 +8,8 @@
       <button @click="login">Login</button>
       <hr />
       <button @click="googlePopUp">GooglePopUp</button>
+      <hr />
+      <button @click="googleRedirect">googleRedirect</button>
     </div>
   </div>
 </template>
@@ -20,6 +22,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 
 export default {
@@ -58,6 +62,21 @@ export default {
         })
         .catch((err) => {
           console.log(err.code, err.message, err.email);
+          const credential = GoogleAuthProvider.credentialFromError(err);
+        });
+    },
+    googleRedirect: function () {
+      const auth = getAuth();
+      const provider = new GoogleAuthProvider();
+      signInWithRedirect(auth, provider);
+      getRedirectResult(auth)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          console.log(result.user);
+        })
+        .catch((err) => {
+          console.log(err.code);
           const credential = GoogleAuthProvider.credentialFromError(err);
         });
     },
