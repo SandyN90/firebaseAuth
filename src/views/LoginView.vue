@@ -10,6 +10,10 @@
       <button @click="googlePopUp">GooglePopUp</button>
       <hr />
       <button @click="googleRedirect">googleRedirect</button>
+      <hr />
+      <button scope="public_profile,email" @click="checkLoginState">
+        FacebookLogin
+      </button>
     </div>
   </div>
 </template>
@@ -24,6 +28,7 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
   getRedirectResult,
+  FacebookAuthProvider,
 } from "firebase/auth";
 
 export default {
@@ -78,6 +83,38 @@ export default {
         .catch((err) => {
           console.log(err.code);
           const credential = GoogleAuthProvider.credentialFromError(err);
+        });
+    },
+    checkLoginState() {
+      const auth = getAuth(app);
+      signInWithPopup(auth, new FacebookAuthProvider())
+        .then((result) => {
+          // The signed-in user info.
+          const user = result.user;
+
+          // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+          const credential = FacebookAuthProvider.credentialFromResult(result);
+          const accessToken = credential.accessToken;
+          console.log("user ", accessToken);
+          // ...
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The AuthCredential type that was used.
+          const credential = FacebookAuthProvider.credentialFromError(error);
+          console.log(
+            "credential ",
+            errorCode,
+            errorMessage,
+            email,
+            credential
+          );
+
+          // ...
         });
     },
   },
